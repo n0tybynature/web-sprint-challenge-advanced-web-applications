@@ -3,15 +3,17 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import Bubbles from "./Bubbles";
 import ColorList from "./ColorList";
+import {axiosWithAuth} from "./../helpers/axiosWithAuth";
 
 const BubblePage = () => {
   const [colorList, setColorList] = useState([]);
   const params = useParams();
 
+  
 
   const getColorList = () => {
-    axios
-      .get(`http://localhost:5000/api/colors/`)
+    axiosWithAuth()
+      .get(`/api/colors/`)
       .then( (res) => setColorList(res.data))
       .catch( (err) => console.log(err.response));
   };
@@ -19,7 +21,7 @@ const BubblePage = () => {
 
   useEffect(() => {
     getColorList();
-  }, [colorList]);
+  }, []);
   
 
 
