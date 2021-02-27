@@ -1,38 +1,78 @@
 import React, { useEffect } from "react";
 import axios from "axios";
+import {axiosWithAuth} from "./../helpers/axiosWithAuth"
 
-const Login = () => {
+
+
+class Login extends React.Component{
   // make a post request to retrieve a token from the api
   // when you have handled the token, navigate to the BubblePage route
+  state = {
+    credentials: {
+      username:"",
+      password:"",
+    }
+  }
+  // useEffect(()=>{
+  //   axios
+  //     .delete(`http://localhost:5000/api/colors/1`, {
+  //       headers:{
+  //         'authorization': "ahuBHejkJJiMDhmODZhZi0zaeLTQ4ZfeaseOGZgesai1jZWYgrTA07i73Gebhu98"
+  //       }
+  //     })
+  //     .then(res=>{
+  //       axios.get(`http://localhost:5000/api/colors`, {
+  //         headers:{
+  //           'authorization': ""
+  //         }
+  //       })
+  //       .then(res=> {
+  //         console.log(res);
+  //       });
+  //       console.log(res);
+  //     })
+  // });
 
-  useEffect(()=>{
-    axios
-      .delete(`http://localhost:5000/api/colors/1`, {
-        headers:{
-          'authorization': "ahuBHejkJJiMDhmODZhZi0zaeLTQ4ZfeaseOGZgesai1jZWYgrTA07i73Gebhu98"
-        }
-      })
-      .then(res=>{
-        axios.get(`http://localhost:5000/api/colors`, {
-          headers:{
-            'authorization': ""
-          }
-        })
-        .then(res=> {
-          console.log(res);
-        });
-        console.log(res);
-      })
-  });
+  handleChange = e => {
+    this.setState({
+      credentials:{
+        ...this.state.credentials,
+        [e.target.name]:e.target.value
+      }
+    })
+  }
 
-  return (
-    <>
-      <h1>
-        Welcome to the Bubble App!
-        <p>Build a login page here</p>
-      </h1>
-    </>
-  );
+  login = e => {
+    e.preventDefault();
+
+    axiosWithAuth()
+      .post("/api/login", this.state.credentials)
+      .then( res => {
+        localStorage.setItem("token", JSON.stringify(res.data.payload));
+        this.props.history.push("/bubblepage");
+      })
+      .catch( err => {
+        console.log(err)
+      });
+  }
+
+
+  render(){
+    return (
+      <div>
+        <h1>
+          Welcome to the Bubble App!
+          <form onSubmit={this.login}>
+            <input type="text" name="username" value={this.state.credentials.username} onChange={this.handleChange}/>
+            <input type="text" name="password" value={this.state.credentials.password} onChange={this.handleChange}/>
+            <button>Submit</button>
+        
+        </form>
+        
+        </h1>
+      </div>
+    );
+  }
 };
 
 export default Login;
